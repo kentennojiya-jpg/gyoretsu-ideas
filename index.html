@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行列ラボ — 改善アイデアストック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE6;
+    --border: #E0DBD0;
+    --border2: #C8C2B4;
+    --text: #1A1714;
+    --text2: #6B6358;
+    --text3: #A09890;
+    --accent: #D4450C;
+    --accent-bg: #FDF0EB;
+    --tag-ux-bg: #EAE8FF; --tag-ux: #3D36A0;
+    --tag-ops-bg: #E0F5ED; --tag-ops: #0A6645;
+    --tag-menu-bg: #FFF3DC; --tag-menu: #7A4A00;
+    --tag-mkt-bg: #FFE8F0; --tag-mkt: #8C2050;
+    --tag-other-bg: #EEECE8; --tag-other: #4A4540;
+    --p-high-bg: #FDECEA; --p-high: #8B1A1A;
+    --p-mid-bg: #FFF3DC; --p-mid: #7A4A00;
+    --p-low-bg: #E8F4E8; --p-low: #1A5C1A;
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+  }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .header-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text3);
+    background: var(--surface2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  /* Layout */
+  .main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  /* Input card */
+  .input-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+  }
+  .input-card-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .field-title {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 15px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+  }
+  .field-title:focus { outline: none; border-color: var(--accent); background: #fff; }
+  .field-title::placeholder { color: var(--text3); }
+  textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 72px;
+    resize: vertical;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+    line-height: 1.7;
+  }
+  textarea:focus { outline: none; border-color: var(--accent); background: #fff; }
+  textarea::placeholder { color: var(--text3); }
+  .select-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  select {
+    flex: 1;
+    min-width: 140px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 12px;
+    font-size: 13px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    cursor: pointer;
+    transition: border-color 0.15s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A09890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+  select:focus { outline: none; border-color: var(--accent); background-color: #fff; }
+  .btn-add {
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Noto Sans JP', sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .btn-add:hover { opacity: 0.88; }
+  .btn-add:active { transform: scale(0.99); }
+
+  /* Filters */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.12s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active {
+    background: var(--text);
+    color: #fff;
+    border-color: var(--text);
+  }
+  .sort-select {
+    font-size: 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 28px 5px 12px;
+    font-family: 'Noto Sans JP', sans-serif;
+    color: var(--text2);
+    background: var(--surface);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23A09890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+  }
+  .sort-select:focus { outline: none; }
+
+  /* Idea cards */
+  .ideas-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .idea-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow);
+    transition: border-color 0.15s, transform 0.15s;
+    animation: slideIn 0.2s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .idea-card:hover { border-color: var(--border2); }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.5;
+  }
+  .card-tags {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+  }
+  .tag-ux    { background: var(--tag-ux-bg);    color: var(--tag-ux); }
+  .tag-ops   { background: var(--tag-ops-bg);   color: var(--tag-ops); }
+  .tag-menu  { background: var(--tag-menu-bg);  color: var(--tag-menu); }
+  .tag-mkt   { background: var(--tag-mkt-bg);   color: var(--tag-mkt); }
+  .tag-other { background: var(--tag-other-bg); color: var(--tag-other); }
+  .card-body {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 12px;
+    white-space: pre-wrap;
+  }
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .priority {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+  }
+  .p-high  { background: var(--p-high-bg);  color: var(--p-high); }
+  .p-mid   { background: var(--p-mid-bg);   color: var(--p-mid); }
+  .p-low   { background: var(--p-low-bg);   color: var(--p-low); }
+  .card-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text3);
+  }
+  .btn-del {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text3);
+    transition: all 0.12s;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .btn-del:hover { color: #C0392B; border-color: #FDECEA; background: #FDECEA; }
+
+  /* Empty */
+  .empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 40px; margin-bottom: 1rem; }
+  .empty p { font-size: 14px; line-height: 1.8; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--text);
+    color: #fff;
+    font-size: 13px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: all 0.2s;
+    pointer-events: none;
+    white-space: nowrap;
+    font-family: 'Noto Sans JP', sans-serif;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 600px) {
+    .main { padding: 1.5rem 1rem 3rem; }
+    .site-header { padding: 0 1rem; }
+    .card-tags { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    行列ラボ 改善アイデア
+  </div>
+  <div class="header-count" id="header-count">0 ideas</div>
+</header>
+
+<main class="main">
+
+  <div class="input-card">
+    <div class="input-card-title">新しいアイデアを追加</div>
+    <input class="field-title" type="text" id="idea-title" placeholder="アイデアのタイトル（例：待ち時間の可視化）" />
+    <textarea id="idea-body" placeholder="詳細・背景・気づいたきっかけなど（省略可）"></textarea>
+    <div class="select-row">
+      <select id="idea-category">
+        <option value="ux">UX・接客</option>
+        <option value="ops">オペレーション</option>
+        <option value="menu">メニュー・商品</option>
+        <option value="mkt">集客・マーケ</option>
+        <option value="other">その他</option>
+      </select>
+      <select id="idea-priority">
+        <option value="mid">優先度：中</option>
+        <option value="high">優先度：高</option>
+        <option value="low">優先度：低</option>
+      </select>
+    </div>
+    <button class="btn-add" onclick="addIdea()">＋ アイデアを追加する</button>
+  </div>
+
+  <div class="section-header">
+    <div class="filters" id="filters">
+      <button class="filter-btn active" onclick="setFilter('all',this)">すべて</button>
+      <button class="filter-btn" onclick="setFilter('ux',this)">UX・接客</button>
+      <button class="filter-btn" onclick="setFilter('ops',this)">オペレーション</button>
+      <button class="filter-btn" onclick="setFilter('menu',this)">メニュー・商品</button>
+      <button class="filter-btn" onclick="setFilter('mkt',this)">集客・マーケ</button>
+      <button class="filter-btn" onclick="setFilter('other',this)">その他</button>
+    </div>
+    <select class="sort-select" id="sort-select" onchange="render()">
+      <option value="newest">新しい順</option>
+      <option value="oldest">古い順</option>
+      <option value="priority">優先度順</option>
+    </select>
+  </div>
+
+  <div class="ideas-list" id="ideas-list"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORAGE_KEY = 'gyoretsu_ideas_v1';
+let ideas = [];
+let currentFilter = 'all';
+
+const CAT = { ux:'UX・接客', ops:'オペレーション', menu:'メニュー・商品', mkt:'集客・マーケ', other:'その他' };
+const PRI = { high:'優先度：高', mid:'優先度：中', low:'優先度：低' };
+const PRI_ORDER = { high:0, mid:1, low:2 };
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) ideas = JSON.parse(raw);
+  } catch(e) { ideas = []; }
+  render();
+}
+
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas)); } catch(e) {}
+}
+
+function addIdea() {
+  const title = document.getElementById('idea-title').value.trim();
+  if (!title) {
+    document.getElementById('idea-title').focus();
+    showToast('タイトルを入力してください');
+    return;
+  }
+  const now = new Date();
+  const dateStr = now.getFullYear() + '/' +
+    String(now.getMonth()+1).padStart(2,'0') + '/' +
+    String(now.getDate()).padStart(2,'0') + ' ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0');
+
+  ideas.unshift({
+    id: Date.now(),
+    title,
+    body: document.getElementById('idea-body').value.trim(),
+    category: document.getElementById('idea-category').value,
+    priority: document.getElementById('idea-priority').value,
+    date: dateStr,
+    ts: Date.now()
+  });
+  save();
+  document.getElementById('idea-title').value = '';
+  document.getElementById('idea-body').value = '';
+  render();
+  showToast('アイデアを追加しました！');
+}
+
+function deleteIdea(id) {
+  ideas = ideas.filter(i => i.id !== id);
+  save();
+  render();
+  showToast('削除しました');
+}
+
+function setFilter(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  let list = currentFilter === 'all' ? [...ideas] : ideas.filter(i => i.category === currentFilter);
+  const sort = document.getElementById('sort-select').value;
+  if (sort === 'oldest') list.sort((a,b) => a.ts - b.ts);
+  else if (sort === 'priority') list.sort((a,b) => PRI_ORDER[a.priority] - PRI_ORDER[b.priority]);
+
+  document.getElementById('header-count').textContent = ideas.length + ' idea' + (ideas.length !== 1 ? 's' : '');
+
+  const el = document.getElementById('ideas-list');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">💡</div><p>アイデアはまだありません。<br>思いついたら、すぐ上に入力してみてください。</p></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map(idea => `
+    <div class="idea-card">
+      <div class="card-top">
+        <div class="card-title">${esc(idea.title)}</div>
+        <div class="card-tags">
+          <span class="tag tag-${idea.category}">${CAT[idea.category]}</span>
+        </div>
+      </div>
+      ${idea.body ? `<div class="card-body">${esc(idea.body)}</div>` : ''}
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="priority p-${idea.priority}">${PRI[idea.priority]}</span>
+          <span class="card-date">${idea.date}</span>
+        </div>
+        <button class="btn-del" onclick="deleteIdea(${idea.id})">削除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+document.getElementById('idea-title').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('idea-body').focus();
+});
+
+load();
+</script>
+</body>
+</html>
