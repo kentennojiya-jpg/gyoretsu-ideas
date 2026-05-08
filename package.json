@@ -1,0 +1,10 @@
+{
+  "name": "gyoretsu-ideas",
+  "version": "2.0.0",
+  "description": "行列ラボ 改善アイデアストック (Notion連携版)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18.x"
+  }
+}
